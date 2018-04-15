@@ -1,0 +1,1 @@
+/Users/hanyu/Documents/google-cloud-sdk/bin/gsutil -m acl set -R -a public-read gs://particle-resources/cardText

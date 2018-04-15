@@ -1,0 +1,110 @@
+<html>
+  <body>
+    <button onclick='logout()'>logout</button>
+    <form name='basicForm'>
+      <input name="target" value=''></input>
+      <input name="message" value='xxx'></input>
+    </form>
+    <button onclick='sendMessage(document.basicForm.target.value, document.basicForm.message.value)'>sendMessage</button>
+    
+    <form name='section2'>
+    <textarea name='area' rows="10" cols="40">
+      Textarea provides space for as many characters as you like.
+    </textarea>
+    </form>
+    
+    <button onclick='linkGoogle()'>linkGoogle</button>
+    
+    <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCQ6_R70CYZFXso7rYAHRpnsDQ-NCyOnW4",
+        authDomain: "fast-drake-630.firebaseapp.com",
+        databaseURL: "https://fast-drake-630.firebaseio.com",
+        projectId: "fast-drake-630",
+        storageBucket: "fast-drake-630.appspot.com",
+        messagingSenderId: "241640252242"
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script>
+      firebase.auth().onAuthStateChanged(function(user){
+        if(user == null){
+          window.location.href = 'index.html'
+        } else {
+          console.log(user)
+          main()
+        }
+      })
+      
+      function logout(){
+        firebase.auth().signOut().then(function() {
+          console.log("logout!")
+        }, function(error) {
+          console.log(error)
+        });
+      }
+      
+      function linkGoogle(){
+        if(firebase.auth().currentUser!=null){
+          var prevUser = firebase.auth().currentUser
+          if(prevUser.isAnonymous == false){
+            console.log('u must be isAnonymous')
+            return
+          }
+          // 連結之前和之後的USER會是同一個
+          var oldUid = prevUser.uid
+          console.log(oldUid)
+          
+          var provider = new firebase.auth.GoogleAuthProvider();
+          firebase.auth().currentUser.linkWithPopup(provider).then(function(result) {
+            // Accounts successfully linked.
+            var credential = result.credential;
+            var user = result.user;
+            console.log(result)
+            console.log('new')
+            console.log(user.uid)
+            console.log('old')
+            console.log(oldUid)
+            // 連結之前和之後的USER會是同一個
+            // UID 一樣，所以不必做檔案COPY的動作
+            // 也不必做刪除帳號的動作
+            console.log('copy data from '+oldUid+' > '+user.uid)
+          }).then(function(){
+            console.log('then!!')
+          }).catch(function(error) {
+            console.log(error)
+          });
+        }
+      }
+      
+      function main(){
+        // 聽自己的信箱
+        var address = 'test/'+firebase.auth().currentUser.uid
+        var database = firebase.database();
+        var testRef = database.ref(address);
+      
+        testRef.on('value', function(snapshot) {
+          console.log("value change")
+          console.log(snapshot.val())
+          if(snapshot.val() != null){
+            document.section2.area.value += snapshot.val().msg
+          }
+        });
+      }
+      
+      function sendMessage(target, msg){
+        // 送到指定的信箱
+        var address = 'test/'+target
+        var database = firebase.database();
+        var testRef = database.ref(address);
+        
+        console.log(msg)
+        testRef.set({ name:'han', msg: msg, ary:[0, 1, 2]})
+      }
+      
+      
+    </script>
+  </body>
+</html>
