@@ -1,0 +1,1 @@
+"C:\Users\johny\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin\gsutil" setmeta -h "Content-Type: application/json" -h "Content-Encoding: utf-8" gs://particle-resources/cardText/**.*

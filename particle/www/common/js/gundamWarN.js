@@ -140,10 +140,6 @@ var gundamWarN = gundamWarN || {};
 			function(cb){
 				async.map(paths, function(path, cb){
 					$.ajax({
-            /*headers: {
-              'Origin':'https://particle-979.firebaseapp.com',
-              'Content-Type': 'application/json; charset=utf-8'
-            },*/
 						url: path,
 						dataType: 'json',
 						success: function( ret ){
